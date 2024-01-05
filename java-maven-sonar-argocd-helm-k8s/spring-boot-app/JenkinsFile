@@ -51,6 +51,9 @@ pipeline {
             steps {
                 script {
                     // Use kubectl to apply the service configuration
+                    sh 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
+                    sh 'chmod +x kubectl'
+                    sh 'sudo mv kubectl /usr/local/bin/'
                     sh 'kubectl apply -f java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/service.yml'
                 }
             }
