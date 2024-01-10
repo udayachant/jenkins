@@ -38,18 +38,35 @@ pipeline {
         }
       }
     }
-    stage('Deploy to Kubernetes') {
+    environment {
+        KUBE_CONFIG = credentials('kube')
+        NAMESPACE = 'default'
+        SERVICE_ACCOUNT = 'uday'
+    }
+
+    stages {
+        stage('Configure Kubernetes') {
             steps {
                 script {
-                    // Use kubectl to apply the service configuration
-                    sh 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
-                    sh 'chmod +x kubectl'
-                    sh 'mv kubectl /usr/local/bin/'
-                    kubernetesDeploy(configs:'java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/service.yml',kubevonfigId: 'kube')
-                    //sh 'kubectl apply -f java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/service.yml'
+                    withCredentials([file(credentialsId: 'kube', variable: 'KUBE_CONFIG')]) {
+                        sh 'mkdir -p $HOME/.kube && cp $KUBE_CONFIG $HOME/.kube/config'
+                    }
                 }
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                container('docker') {
+                    withCredentials([string(credentialsId: 'uday', variable: 'kube')]) {
+                        sh 'kubectl config use-context your-cluster-context'
+                        sh "kubectl apply -f your-deployment.yaml --namespace=$NAMESPACE"
+                    }
+                }
+            }
+        }
+    }
+    
     stage('Update Deployment File') {
         environment {
             GIT_REPO_NAME = "jenkins"
