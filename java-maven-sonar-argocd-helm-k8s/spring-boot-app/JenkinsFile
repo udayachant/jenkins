@@ -5,6 +5,11 @@ pipeline {
       args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
     }
   }
+   environment {
+        KUBE_CONFIG = credentials('kube')
+        NAMESPACE = 'default'
+        SERVICE_ACCOUNT = 'uday'
+    }
   stages {
     stage('Checkout') {
       steps {
@@ -38,11 +43,7 @@ pipeline {
         }
       }
     }
-    environment {
-        KUBE_CONFIG = credentials('kube')
-        NAMESPACE = 'default'
-        SERVICE_ACCOUNT = 'uday'
-    }
+    
     stage('Configure Kubernetes') {
             steps {
                 script {
@@ -82,5 +83,5 @@ pipeline {
             }
         }
     }
-  }
+  
 }
