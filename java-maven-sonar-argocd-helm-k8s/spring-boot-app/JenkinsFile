@@ -43,9 +43,7 @@ pipeline {
         NAMESPACE = 'default'
         SERVICE_ACCOUNT = 'uday'
     }
-
-    stages {
-        stage('Configure Kubernetes') {
+    stage('Configure Kubernetes') {
             steps {
                 script {
                     withCredentials([file(credentialsId: 'kube', variable: 'KUBE_CONFIG')]) {
@@ -54,9 +52,7 @@ pipeline {
                 }
             }
         }
-}
-
-        stage('Deploy to Kubernetes') {
+    stage('Deploy to Kubernetes') {
             steps {
                 container('docker') {
                     withCredentials([string(credentialsId: 'uday', variable: 'kube')]) {
