@@ -48,7 +48,7 @@ pipeline {
             sh 'chmod +x kubectl'
             sh 'mv kubectl /usr/local/bin/'
             withKubeCredentials(credentialsId: "kubecred", clusterName: 'democluster', namespace: "default") {
-                sh './kubectl get nodes'
+                sh 'kubectl get nodes'
             }
         }
     }
