@@ -44,9 +44,9 @@ pipeline {
     stage('Deploy in Kubernetes') {
       steps {
         script {
-            sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
+            sh 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
             sh 'chmod +x kubectl'
-            sh 'mv kubectl /usr/local/bin/kubectl'
+            sh 'mv kubectl /usr/local/bin/'
             withKubeCredentials(credentialsId: "kubecred", clusterName: 'democluster', namespace: "default") {
                 sh './kubectl get nodes'
             }
