@@ -47,7 +47,7 @@ pipeline {
             sh 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
             sh 'chmod +x kubectl'
             sh 'mv kubectl /usr/local/bin/'
-            withKubeCredentials(credentialsId: "kubecred", clusterName: 'democluster', namespace: "default") {
+            withKubeCredentials([credentialsId: "kubecred",,serverUrl: 'https://AD6B58A46BA2E6DE19F6CD2B6A41423A.gr7.ap-southeast-1.eks.amazonaws.com',clusterName: 'democluster', namespace: "default"]) {
                 sh 'kubectl get nodes'
             }
         }
