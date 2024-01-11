@@ -44,25 +44,18 @@ pipeline {
       }
     }
     
-    stage('Configure Kubernetes') {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'kube', variable: 'KUBE_CONFIG')]) {
-                        sh 'mkdir -p $HOME/.kube && cp $KUBE_CONFIG $HOME/.kube/config'
-                    }
-                }
-            }
-        }
-    stage('Deploy to Kubernetes') {
-            steps {
-                container('docker') {
-                    withCredentials([string(credentialsId: 'uday', variable: 'kube')]) {
-                        sh 'kubectl config use-context your-cluster-context'
-                        sh "kubectl apply -f your-deployment.yaml --namespace=$NAMESPACE"
-                    }
-                }
-            }
-        }
+    
+    stage('Deploy in Kubernetes') {
+        steps {
+         withKubeCredentials{kubectlCredentials:{{caCertificate: "",clusterName: 'democluster',contextName: "",credentialsId: "kubecred",namespace: "default",serverUrl: "https://AD6B58A46BA2E6DE19F6CD2B6A41423A.gr7.ap-southeast-1.eks.amazonaws.com"}}
+}{
+          sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
+          sh 'sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl'
+          sh 'chmod +x kubectl'
+          sh './kubectl get nodes'
+}
+}
+}
     
     stage('Update Deployment File') {
         environment {
