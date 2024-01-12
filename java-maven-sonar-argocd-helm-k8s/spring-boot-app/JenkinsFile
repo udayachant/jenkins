@@ -42,19 +42,20 @@ pipeline {
     
     
     stage('Deploy in Kubernetes') {
-      steps {
+    steps {
         script {
             sh 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
             sh 'chmod +x kubectl'
             sh 'mv kubectl /usr/local/bin/'
-            //withKubeConfig([credentialsId: 'kubecred']) {
-            withKubeCredentials{kubectlCredentials:{{caCertificate: "",clusterName: 'democluster',contextName: "",credentialsId: "kubecred",namespace: "default",serverUrl: "https://FDACEAAA4F8716D1A6F2CFA67161072F.sk1.ap-southeast-1.eks.amazonaws.com"}}
 
+            withKubeCredentials(credentialsId: 'kubecred', clusterName: 'democluster', namespace: 'default', serverUrl: 'https://FDACEAAA4F8716D1A6F2CFA67161072F.sk1.ap-southeast-1.eks.amazonaws.com') {
                 sh 'kubectl get nodes'
+                // Add your Kubernetes deployment steps here
             }
-        //}
+        }
     }
 }
+
   stage('Update Deployment File') {
         environment {
             GIT_REPO_NAME = "jenkins"
