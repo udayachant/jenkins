@@ -51,6 +51,7 @@ pipeline {
             withKubeConfig(credentialsId: 'kubecred', clusterName: 'democluster', namespace: 'default', serverUrl: 'https://FDACEAAA4F8716D1A6F2CFA67161072F.sk1.ap-southeast-1.eks.amazonaws.com') {
                 sh 'kubectl get nodes'
                 // Add your Kubernetes deployment steps here
+                // kubecred passsed above is the secret of serviceaccount created
             }
         }
     }
